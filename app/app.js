@@ -14,6 +14,7 @@ app.controller('appCtrl', ['$scope',
         $scope.limit = '5';
         $scope.trackName = 'Enter Sandman';
         $scope.currentTab = 0;
+        $scope.noLyrics = false;
 
         $scope.submitArtist = function(){
             if(validateArtistName($scope.artist, $scope.tracks)){
@@ -53,12 +54,12 @@ app.controller('appCtrl', ['$scope',
         };
 
         $scope.downloadTrack = function(){
-            downloadSong($scope.artist, $scope.trackName);
+            downloadSong($scope.artist, $scope.trackName, !$scope.noLyrics);
         };
 
         $scope.downloadAll = function(){
-            downloadArtistsSongs($scope.tracks[$scope.currentTab]);
-        }
+            downloadArtistsSongs($scope.tracks[$scope.currentTab], !$scope.noLyrics);
+        };
     }
 ]);
 
@@ -86,24 +87,38 @@ function getTracks(artist, limit, callback)
     xmlHttp.send(null);
 }
 
-function downloadArtistsSongs(tracks){
+function downloadArtistsSongs(tracks, lyrics){
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
             alert('Sucess !');
     };
 
-    xmlHttp.open('POST', songDownloaderAPIBaseUrl + downloadTracksRoute, true);
+    if(lyrics){
+        xmlHttp.open('POST', songDownloaderAPIBaseUrl + downloadTracksRoute, true);
+    }
+    else{
+        xmlHttp.open('POST', songDownloaderAPIBaseUrl + downloadTracksRoute + '/noLyrics', true);
+    }
+
     xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xmlHttp.send(JSON.stringify(tracks));
 }
 
-function downloadSong(artist, trackName){
+function downloadSong(artist, trackName, lyrics){
     console.log('artist:', artist);
     console.log('trackName:', trackName);
-    var requestUrl = (songDownloaderAPIBaseUrl + downloadSingleTrackRoute)
-        .replace('Artist_Name', artist)
-        .replace('Track_Name', trackName);
+    if(lyrics){
+        var requestUrl = (songDownloaderAPIBaseUrl + downloadSingleTrackRoute)
+            .replace('Artist_Name', artist)
+            .replace('Track_Name', trackName);
+    }
+    else{
+        var requestUrl = (songDownloaderAPIBaseUrl + downloadSingleTrackRoute + '/noLyrics')
+            .replace('Artist_Name', artist)
+            .replace('Track_Name', trackName);
+    }
+
 
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() {

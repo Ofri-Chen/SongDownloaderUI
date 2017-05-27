@@ -25,7 +25,7 @@
             </form>
 
             <button id="download-track" ng-click="downloadTrack()">Download Track</button>
-
+            <input type="checkbox" ng-model="noLyrics">
             <ul>
                 <li class="tab" ng-repeat="tab in tracks">
                     <button>{{tab.artist}}</button>
