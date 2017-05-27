@@ -1,0 +1,49 @@
+body{
+    background-color: lightgray;
+}
+
+form{
+    margin-left: 20px;
+}
+
+.track{
+    list-style: none;
+    width: 20%;
+    background-color: #4d94ff;
+
+    padding: 5px;
+
+    border-top: solid;
+    border-bottom: solid;
+    border-width: 1px;
+}
+
+.removeBtn{
+    background-color: #b3d1ff;
+}
+
+.trackName{
+    display: inline;
+}
+
+#limit{
+    margin-left: 43px;
+    margin-top: 5px;
+}
+
+#submitBtn{
+    margin-top: 5px;
+    margin-left: 87px;
+}
+
+.tab{
+    list-style: none;
+    display: inline-block;
+}
+
+.tab button{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 150px;
+    margin-right: 1px;
+}
