@@ -7,17 +7,24 @@
     </head>
     <body>
         <div ng-controller="appCtrl">
-            <form ng-submit="submit()">
+            <form ng-submit="submitArtist()">
                 <div>
                     Artist Name:
-                    <input type="text" ng-model="artist">
+                    <input id="artist-name" type="text" ng-model="artist">
                 </div>
                 <div>
                     Limit:
                     <input id="limit" type="text" ng-model="limit">
                 </div>
+                <div>
+                    Specific Track:
+                    <input id="track-name" type="text" ng-model="trackName">
+                </div>
+
                 <input id="submitBtn" type="submit">
             </form>
+
+            <button id="download-track" ng-click="downloadTrack()">Download Track</button>
 
             <ul>
                 <li class="tab" ng-repeat="tab in tracks">

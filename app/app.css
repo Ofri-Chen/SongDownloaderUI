@@ -26,14 +26,22 @@ form{
     display: inline;
 }
 
+#artist-name{
+    margin-left: 15px;
+}
+
 #limit{
-    margin-left: 43px;
+    margin-left: 58px;
+    margin-top: 5px;
+}
+
+#track-name{
     margin-top: 5px;
 }
 
 #submitBtn{
     margin-top: 5px;
-    margin-left: 87px;
+    margin-left: 102px;
 }
 
 .tab{
@@ -46,4 +54,13 @@ form{
     padding-bottom: 10px;
     width: 150px;
     margin-right: 1px;
+    background: linear-gradient(#6493C3, #BCD8F5);
+}
+
+form{
+    display: inline-block;
+}
+
+#download-track{
+    margin-left: -116px;
 }
