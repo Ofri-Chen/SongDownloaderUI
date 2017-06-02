@@ -18,7 +18,7 @@ form{
     border-width: 1px;
 }
 
-.removeBtn{
+.removeTrackBtn{
     background-color: #b3d1ff;
 }
 
@@ -49,23 +49,31 @@ form{
     display: inline-block;
 }
 
-.tab button{
+.tab .tab-button {
     padding-top: 10px;
     padding-bottom: 10px;
     width: 150px;
     margin-right: 1px;
     background: linear-gradient(#6493C3, #BCD8F5);
+    display:inline-block;
+    border:1px solid #CCC;
+    box-shadow: 0 0 5px -1px rgba(0,0,0,0.2);
+    cursor:pointer;
+    vertical-align:middle;
 }
 
-.tab:first-child button{
-    padding-top: 10px;
-    padding-bottom: 10px;
-    width: 150px;
-    margin-right: 1px;
+.tab:first-child .tab-button{
     background: linear-gradient(#336BA2, #5D9EDF);
 }
 
+.tabName{
+    display: inline;
+}
 
+.removeTabBtn{
+    display: inline-block;
+    float: right;
+}
 
 
 form{
@@ -75,3 +83,5 @@ form{
 #download-track{
     margin-left: -116px;
 }
+
+

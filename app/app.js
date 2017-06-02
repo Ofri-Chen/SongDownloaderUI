@@ -31,15 +31,26 @@ app.controller('appCtrl', ['$scope',
             }
         };
 
-        $scope.removeBtn = function(){
-            var index = $scope.tracks[$scope.currentTab].tracks.indexOf(event.currentTarget.parentElement.getElementsByClassName('trackName')[0].innerHTML);
-            console.log(index);
+        $scope.removeTrackBtn = function(){
+            var index = $scope.tracks[$scope.currentTab].tracks.indexOf(
+                event.currentTarget.parentElement.getElementsByClassName('trackName')[0].innerHTML);
             $scope.tracks[$scope.currentTab].tracks.splice(index, 1);
             updateLocalStorage($scope.tracks);
         };
 
+        $scope.removeTabBtn = function(){
+            var tabName = event.currentTarget.parentElement.getElementsByClassName('tabName')[0].innerHTML;
+            for(var i = 0; i < $scope.tracks.length; i++){
+                if(tabName == $scope.tracks[i].artist){
+                    $scope.tracks.splice(i, 1);
+                }
+            }
+
+            updateLocalStorage($scope.tracks);
+        };
+
         $scope.tabClick = function(){
-            var clickedBtnHtml = event.currentTarget.innerHTML;
+            var clickedBtnHtml = event.currentTarget.querySelector('div').innerHTML;
 
             for(var i = 0; i < $scope.tracks.length; i++){
                 if(clickedBtnHtml == $scope.tracks[i].artist){
@@ -151,7 +162,7 @@ function validateArtistName(artistName, tracks){
 }
 
 function emphasizeCurrentTab(index, length){
-    var tabs = document.querySelectorAll('.tab button');
+    var tabs = document.querySelectorAll('.tab .tab-button');
     if(tabs.length > 0){
         for(var i = 0; i < length; i++){
             tabs[i].style.background = 'linear-gradient(#6493C3, #BCD8F5)';
