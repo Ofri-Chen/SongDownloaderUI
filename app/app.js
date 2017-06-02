@@ -14,6 +14,7 @@ app.controller('appCtrl', ['$scope',
         $scope.limit = '5';
         $scope.trackName = 'Enter Sandman';
         $scope.currentTab = 0;
+        $scope.noLyrics = false;
 
         $scope.submitArtist = function(){
             if(validateArtistName($scope.artist, $scope.tracks)){
@@ -22,43 +23,37 @@ app.controller('appCtrl', ['$scope',
                     $scope.currentTab = $scope.tracks.length - 1;
                     $scope.$apply();
                     emphasizeCurrentTab($scope.currentTab, $scope.tracks.length);
-
-                    var removeTrackElements = document.getElementsByClassName('removeBtn');
-                    for(var i = 0; i < removeTrackElements.length; i++){
-                        removeTrackElements[i].addEventListener('click', function(event){
-                            var index = $scope.tracks[0].tracks.indexOf(event.target.nextElementSibling.innerHTML);
-                            $scope.tracks[0].tracks.splice(index, 1);
-                            $scope.$apply();
-                        }, false);
-                    }
-
-                    var tabs = document.querySelectorAll('.tab button');
-                    var tab = tabs[tabs.length - 1];
-                    tab.addEventListener('click', function(event){
-                        var clickedBtnHtml = event.target.innerHTML;
-
-                        var tabsElements = document.querySelectorAll('.tab button');
-                        for(var i = 0; i < tabsElements.length; i++){
-                            if(tabsElements[i].innerHTML == clickedBtnHtml){
-                                $scope.currentTab = i;
-                                break;
-                            }
-                        }
-
-                        emphasizeCurrentTab($scope.currentTab, $scope.tracks.length);
-                        $scope.$apply();
-                    }, false);
                 })
             }
         };
 
+        $scope.removeBtn = function(){
+            var index = $scope.tracks[$scope.currentTab].tracks.indexOf(event.currentTarget.parentElement.getElementsByClassName('trackName')[0].innerHTML);
+            console.log(index);
+            $scope.tracks[$scope.currentTab].tracks.splice(index, 1);
+        };
+
+        $scope.tabClick = function(){
+            var clickedBtnHtml = event.currentTarget.innerHTML;
+
+            for(var i = 0; i < $scope.tracks.length; i++){
+                if(clickedBtnHtml == $scope.tracks[i].artist){
+                    $scope.currentTab = i;
+                    console.log('currentTab', $scope.currentTab);
+                    break;
+                }
+            }
+
+            emphasizeCurrentTab($scope.currentTab, $scope.tracks.length);
+        };
+
         $scope.downloadTrack = function(){
-            downloadSong($scope.artist, $scope.trackName);
+            downloadSong($scope.artist, $scope.trackName, !$scope.noLyrics);
         };
 
         $scope.downloadAll = function(){
-            downloadArtistsSongs($scope.tracks[$scope.currentTab]);
-        }
+            downloadArtistsSongs($scope.tracks[$scope.currentTab], !$scope.noLyrics);
+        };
     }
 ]);
 
@@ -86,24 +81,38 @@ function getTracks(artist, limit, callback)
     xmlHttp.send(null);
 }
 
-function downloadArtistsSongs(tracks){
+function downloadArtistsSongs(tracks, lyrics){
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() {
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
             alert('Sucess !');
     };
 
-    xmlHttp.open('POST', songDownloaderAPIBaseUrl + downloadTracksRoute, true);
+    if(lyrics){
+        xmlHttp.open('POST', songDownloaderAPIBaseUrl + downloadTracksRoute, true);
+    }
+    else{
+        xmlHttp.open('POST', songDownloaderAPIBaseUrl + downloadTracksRoute + '/noLyrics', true);
+    }
+
     xmlHttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xmlHttp.send(JSON.stringify(tracks));
 }
 
-function downloadSong(artist, trackName){
+function downloadSong(artist, trackName, lyrics){
     console.log('artist:', artist);
     console.log('trackName:', trackName);
-    var requestUrl = (songDownloaderAPIBaseUrl + downloadSingleTrackRoute)
-        .replace('Artist_Name', artist)
-        .replace('Track_Name', trackName);
+    if(lyrics){
+        var requestUrl = (songDownloaderAPIBaseUrl + downloadSingleTrackRoute)
+            .replace('Artist_Name', artist)
+            .replace('Track_Name', trackName);
+    }
+    else{
+        var requestUrl = (songDownloaderAPIBaseUrl + downloadSingleTrackRoute + '/noLyrics')
+            .replace('Artist_Name', artist)
+            .replace('Track_Name', trackName);
+    }
+
 
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.onreadystatechange = function() {

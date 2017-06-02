@@ -28,7 +28,7 @@
 
             <ul>
                 <li class="tab" ng-repeat="tab in tracks">
-                    <button>{{tab.artist}}</button>
+                    <button ng-click="tabClick()">{{tab.artist}}</button>
                 </li>
             </ul>
 
@@ -37,7 +37,7 @@
             <ul>
                 <li class="track" ng-repeat="track in tracks[currentTab].tracks">
                     <div>
-                        <button class="removeBtn">X</button>
+                        <button class="removeBtn" ng-click="removeBtn()">X</button>
                         <div class="trackName">{{track}}</div>
                     </div>
 
