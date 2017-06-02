@@ -57,6 +57,17 @@ form{
     background: linear-gradient(#6493C3, #BCD8F5);
 }
 
+.tab:first-child button{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 150px;
+    margin-right: 1px;
+    background: linear-gradient(#336BA2, #5D9EDF);
+}
+
+
+
+
 form{
     display: inline-block;
 }

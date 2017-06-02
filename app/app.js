@@ -9,12 +9,18 @@ var downloadSingleTrackRoute = 'track/Artist_Name/Track_Name';
 var app = angular.module('app', []);
 app.controller('appCtrl', ['$scope',
     function($scope) {
-        $scope.tracks = [];
+        $scope.tracks = JSON.parse(window.localStorage.getItem('tracks'));
         $scope.artist = 'Metallica';
         $scope.limit = '5';
         $scope.trackName = 'Enter Sandman';
         $scope.currentTab = 0;
         $scope.noLyrics = false;
+
+        $scope.tabLoad = function(){
+            // alert();
+            // emphasizeCurrentTab($scope.currentTab, $scope.tracks.length);
+        };
+
 
         $scope.submitArtist = function(){
             if(validateArtistName($scope.artist, $scope.tracks)){
@@ -23,6 +29,7 @@ app.controller('appCtrl', ['$scope',
                     $scope.currentTab = $scope.tracks.length - 1;
                     $scope.$apply();
                     emphasizeCurrentTab($scope.currentTab, $scope.tracks.length);
+                    updateLocalStorage($scope.tracks);
                 })
             }
         };
@@ -31,6 +38,7 @@ app.controller('appCtrl', ['$scope',
             var index = $scope.tracks[$scope.currentTab].tracks.indexOf(event.currentTarget.parentElement.getElementsByClassName('trackName')[0].innerHTML);
             console.log(index);
             $scope.tracks[$scope.currentTab].tracks.splice(index, 1);
+            updateLocalStorage($scope.tracks);
         };
 
         $scope.tabClick = function(){
@@ -39,7 +47,6 @@ app.controller('appCtrl', ['$scope',
             for(var i = 0; i < $scope.tracks.length; i++){
                 if(clickedBtnHtml == $scope.tracks[i].artist){
                     $scope.currentTab = i;
-                    console.log('currentTab', $scope.currentTab);
                     break;
                 }
             }
@@ -55,6 +62,7 @@ app.controller('appCtrl', ['$scope',
             downloadArtistsSongs($scope.tracks[$scope.currentTab], !$scope.noLyrics);
         };
     }
+
 ]);
 
 function getTracks(artist, limit, callback)
@@ -146,8 +154,14 @@ function validateArtistName(artistName, tracks){
 
 function emphasizeCurrentTab(index, length){
     var tabs = document.querySelectorAll('.tab button');
-    for(var i = 0; i < length; i++){
-        tabs[i].style.background = 'linear-gradient(#6493C3, #BCD8F5)';
+    if(tabs.length > 0){
+        for(var i = 0; i < length; i++){
+            tabs[i].style.background = 'linear-gradient(#6493C3, #BCD8F5)';
+        }
+        tabs[index].style.background = 'linear-gradient(#336BA2, #5D9EDF)';
     }
-    tabs[index].style.background = 'linear-gradient(#336BA2, #5D9EDF)';
+}
+
+function updateLocalStorage(tracks){
+    window.localStorage.setItem('tracks', JSON.stringify(tracks));
 }
