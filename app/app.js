@@ -9,18 +9,15 @@ var downloadSingleTrackRoute = 'track/Artist_Name/Track_Name';
 var app = angular.module('app', []);
 app.controller('appCtrl', ['$scope',
     function($scope) {
-        $scope.tracks = JSON.parse(window.localStorage.getItem('tracks'));
+        $scope.tracks = [];
+        if(JSON.parse(window.localStorage.getItem('tracks')) != null){
+            $scope.tracks = JSON.parse(window.localStorage.getItem('tracks'));
+        }
         $scope.artist = 'Metallica';
         $scope.limit = '5';
         $scope.trackName = 'Enter Sandman';
         $scope.currentTab = 0;
         $scope.noLyrics = false;
-
-        $scope.tabLoad = function(){
-            // alert();
-            // emphasizeCurrentTab($scope.currentTab, $scope.tracks.length);
-        };
-
 
         $scope.submitArtist = function(){
             if(validateArtistName($scope.artist, $scope.tracks)){
@@ -62,7 +59,6 @@ app.controller('appCtrl', ['$scope',
             downloadArtistsSongs($scope.tracks[$scope.currentTab], !$scope.noLyrics);
         };
     }
-
 ]);
 
 function getTracks(artist, limit, callback)
@@ -144,9 +140,11 @@ function parseTrackNames(rawTracksArray, callback){
 }
 
 function validateArtistName(artistName, tracks){
-    for(var i = 0; i < tracks.length; i++){
-        if(tracks[i].artist == artistName){
-            return false;
+    if(tracks){
+        for(var i = 0; i < tracks.length; i++){
+            if(tracks[i].artist == artistName){
+                return false;
+            }
         }
     }
     return true;
