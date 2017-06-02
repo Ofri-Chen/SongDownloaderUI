@@ -73,6 +73,7 @@ form{
 .removeTabBtn{
     display: inline-block;
     float: right;
+    background-color: #b3d1ff;
 }
 
 
@@ -84,4 +85,7 @@ form{
     margin-left: -116px;
 }
 
+#lyricsCheckBox{
+    margin-left: 20px;
+}
 

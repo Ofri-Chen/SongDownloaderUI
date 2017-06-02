@@ -25,7 +25,10 @@
             </form>
 
             <button id="download-track" ng-click="downloadTrack()">Download Track</button>
-            <input type="checkbox" ng-model="noLyrics">
+            <div id="lyricsCheckBox">
+                Lyrics:
+                <input type="checkbox" ng-model="lyrics">
+            </div>
             <ul>
                 <li class="tab" ng-repeat="tab in tracks">
                     <div class="tab-button" ng-click="tabClick()" ng-init="tabLoad()">
@@ -35,7 +38,7 @@
                 </li>
             </ul>
 
-            <button ng-click="downloadAll()">Download All</button>
+            <button ng-click="downloadAll()" ng-hide="tracks.length == 0">Download All</button>
 
             <ul>
                 <li class="track" ng-repeat="track in tracks[currentTab].tracks">
@@ -43,7 +46,6 @@
                         <button class="removeTrackBtn" ng-click="removeTrackBtn()">X</button>
                         <div class="trackName">{{track}}</div>
                     </div>
-
                 </li>
             </ul>
         </div>

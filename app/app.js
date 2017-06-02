@@ -17,7 +17,7 @@ app.controller('appCtrl', ['$scope',
         $scope.limit = '5';
         $scope.trackName = 'Enter Sandman';
         $scope.currentTab = 0;
-        $scope.noLyrics = false;
+        $scope.lyrics = true;
 
         $scope.submitArtist = function(){
             if(validateArtistName($scope.artist, $scope.tracks)){
@@ -63,11 +63,11 @@ app.controller('appCtrl', ['$scope',
         };
 
         $scope.downloadTrack = function(){
-            downloadSong($scope.artist, $scope.trackName, !$scope.noLyrics);
+            downloadSong($scope.artist, $scope.trackName, $scope.lyrics);
         };
 
         $scope.downloadAll = function(){
-            downloadArtistsSongs($scope.tracks[$scope.currentTab], !$scope.noLyrics);
+            downloadArtistsSongs($scope.tracks[$scope.currentTab], $scope.lyrics);
         };
     }
 ]);
@@ -115,8 +115,7 @@ function downloadArtistsSongs(tracks, lyrics){
 }
 
 function downloadSong(artist, trackName, lyrics){
-    console.log('artist:', artist);
-    console.log('trackName:', trackName);
+    console.log(lyrics);
     if(lyrics){
         var requestUrl = (songDownloaderAPIBaseUrl + downloadSingleTrackRoute)
             .replace('Artist_Name', artist)
