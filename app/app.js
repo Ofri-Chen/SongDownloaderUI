@@ -43,15 +43,27 @@ app.controller('appCtrl', ['$scope',
             for(var i = 0; i < $scope.tracks.length; i++){
                 if(tabName == $scope.tracks[i].artist){
                     $scope.tracks.splice(i, 1);
+                    if($scope.currentTab > $scope.tracks.length - 1){
+                        if($scope.tracks.length == 0){
+                            $scope.currentTab = 0;
+                        }
+                        else{
+                            $scope.currentTab = $scope.tracks.length - 1;
+                        }
+                    }
+                    emphasizeCurrentTab($scope.currentTab);
+                    break;
                 }
             }
 
+            if($scope.tracks.length > 0){
+                emphasizeCurrentTab($scope.currentTab, $scope.tracks.length);
+            }
             updateLocalStorage($scope.tracks);
         };
 
         $scope.tabClick = function(){
             var clickedBtnHtml = event.currentTarget.querySelector('div').innerHTML;
-
             for(var i = 0; i < $scope.tracks.length; i++){
                 if(clickedBtnHtml == $scope.tracks[i].artist){
                     $scope.currentTab = i;
@@ -115,7 +127,6 @@ function downloadArtistsSongs(tracks, lyrics){
 }
 
 function downloadSong(artist, trackName, lyrics){
-    console.log(lyrics);
     if(lyrics){
         var requestUrl = (songDownloaderAPIBaseUrl + downloadSingleTrackRoute)
             .replace('Artist_Name', artist)
@@ -160,10 +171,10 @@ function validateArtistName(artistName, tracks){
     return true;
 }
 
-function emphasizeCurrentTab(index, length){
+function emphasizeCurrentTab(index/*, length*/){
     var tabs = document.querySelectorAll('.tab .tab-button');
     if(tabs.length > 0){
-        for(var i = 0; i < length; i++){
+        for(var i = 0; i < tabs.length; i++){
             tabs[i].style.background = 'linear-gradient(#6493C3, #BCD8F5)';
         }
         tabs[index].style.background = 'linear-gradient(#336BA2, #5D9EDF)';
