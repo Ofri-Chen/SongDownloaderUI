@@ -6,7 +6,8 @@
         <link rel="stylesheet" href="app.css">
     </head>
     <body>
-        <div ng-controller="appCtrl">
+
+    <div ng-controller="appCtrl">
             <form ng-submit="submitArtist()">
                 <div>
                     Artist Name:
@@ -38,19 +39,23 @@
                 </li>
             </ul>
 
-            <button ng-click="downloadAll()" ng-hide="tracks.length == 0">Download All</button>
+            <button id="download-all-btn" ng-click="downloadAll()" ng-hide="tracks.length == 0">Download All</button>
 
-            <ul>
-                <li class="track" ng-repeat="track in tracks[currentTab].tracks">
+            <ul id="track-list">
+                <li class="track" ng-repeat="track in tracks[currentTab].tracks" ng-click="playVideo()">
                     <div>
                         <button class="removeTrackBtn" ng-click="removeTrackBtn()">X</button>
                         <div class="trackName">{{track}}</div>
                     </div>
                 </li>
             </ul>
-        </div>
+            <div id="player"></div>
+
+    </div>
 
         <script src="angular.min.js"></script>
+        <script id="youtube-iframe-api" src="https://www.youtube.com/iframe_api"></script>
         <script src="app.js"></script>
+        <script src="youtube-iframe.js"></script>
     </body>
 </html>

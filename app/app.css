@@ -10,12 +10,12 @@ form{
     list-style: none;
     width: 20%;
     background-color: #4d94ff;
-
     padding: 5px;
-
     border-top: solid;
     border-bottom: solid;
     border-width: 1px;
+    box-shadow: 0 0 5px -1px rgba(0,0,0,0.2);
+    cursor:pointer;
 }
 
 .removeTrackBtn{
@@ -89,3 +89,15 @@ form{
     margin-left: 20px;
 }
 
+#track-list{
+    width: 100%;
+    display: inline-block;
+}
+
+#player{
+    display: inline-block;
+}
+
+#download-all-btn{
+    display: block;
+}

@@ -4,6 +4,7 @@ var songDownloaderAPIPort = 3000;
 var songDownloaderAPIBaseUrl = 'http://localhost:' + songDownloaderAPIPort + '/v1/';
 var downloadTracksRoute = 'tracksArray';
 var downloadSingleTrackRoute = 'track/Artist_Name/Track_Name';
+var youtubeApi = 'https://www.googleapis.com/youtube/v3/search?part=snippet&q=TrackName&type=video&maxResults=Max_Results&key=AIzaSyDOegfItpZ_goZccL_pmREwZoNXoaYZNaw';
 
 
 var app = angular.module('app', []);
@@ -18,12 +19,14 @@ app.controller('appCtrl', ['$scope',
         $scope.trackName = 'Enter Sandman';
         $scope.currentTab = 0;
         $scope.lyrics = true;
+        $scope.currentArtist = getCurrentArtist();
 
         $scope.submitArtist = function(){
             if(validateArtistName($scope.artist, $scope.tracks)){
                 getTracks($scope.artist, $scope.limit ,function(trackNames){
                     $scope.tracks.push({artist: $scope.artist, tracks: trackNames});
                     $scope.currentTab = $scope.tracks.length - 1;
+                    $scope.currentArtist = $scope.tracks[$scope.tracks.length - 1].artist;
                     $scope.$apply();
                     emphasizeCurrentTab($scope.currentTab, $scope.tracks.length);
                     updateLocalStorage($scope.tracks);
@@ -40,25 +43,30 @@ app.controller('appCtrl', ['$scope',
 
         $scope.removeTabBtn = function(){
             var tabName = event.currentTarget.parentElement.getElementsByClassName('tabName')[0].innerHTML;
-            for(var i = 0; i < $scope.tracks.length; i++){
+            for(var i = 0; i < $scope.tracks.length; i++) {
                 if(tabName == $scope.tracks[i].artist){
-                    $scope.tracks.splice(i, 1);
-                    if($scope.currentTab > $scope.tracks.length - 1){
-                        if($scope.tracks.length == 0){
-                            $scope.currentTab = 0;
-                        }
-                        else{
-                            $scope.currentTab = $scope.tracks.length - 1;
+                    if($scope.currentTab == i){
+                        if($scope.currentTab == $scope.tracks.length - 1){
+                            //remove the last tab, while it's emphasized
+                            if($scope.currentTab != 0){
+                                $scope.currentTab--;
+                                emphasizeCurrentTab($scope.currentTab, $scope.tracks.length);
+                            }
                         }
                     }
-                    emphasizeCurrentTab($scope.currentTab);
+                    else{
+                        if($scope.currentTab > i){
+                            $scope.currentTab--;
+                        }
+                    }
+
+                    $scope.tracks.splice(i, 1);
                     break;
                 }
             }
 
-            if($scope.tracks.length > 0){
-                emphasizeCurrentTab($scope.currentTab, $scope.tracks.length);
-            }
+            $scope.currentArtist = $scope.tracks.length > 0 ? $scope.tracks[$scope.currentTab].artist : '';
+
             updateLocalStorage($scope.tracks);
         };
 
@@ -67,6 +75,7 @@ app.controller('appCtrl', ['$scope',
             for(var i = 0; i < $scope.tracks.length; i++){
                 if(clickedBtnHtml == $scope.tracks[i].artist){
                     $scope.currentTab = i;
+                    $scope.currentArtist = $scope.tracks[i].artist;
                     break;
                 }
             }
@@ -81,6 +90,25 @@ app.controller('appCtrl', ['$scope',
         $scope.downloadAll = function(){
             downloadArtistsSongs($scope.tracks[$scope.currentTab], $scope.lyrics);
         };
+
+        $scope.playVideo = function(){
+            var trackName = getTrackName(event);
+            getYoutubeVideoId($scope.currentArtist, trackName, $scope.lyrics, 1, playVideo);
+        };
+
+        function playVideo(trackName, videoId, tries){
+            if(videoId){
+                playYoutubeVideo(videoId, function(isVideoWorking){
+                    if(!isVideoWorking){
+                        getYoutubeVideoId($scope.currentArtist, trackName, $scope.lyrics, tries + 1, playVideo);
+                    }
+                });
+            }
+        }
+
+        function getCurrentArtist(){
+            return $scope.tracks.length > 0 ? $scope.tracks[0].artist : '';
+        }
     }
 ]);
 
@@ -127,13 +155,15 @@ function downloadArtistsSongs(tracks, lyrics){
 }
 
 function downloadSong(artist, trackName, lyrics){
+    var baseRequestUrl = songDownloaderAPIBaseUrl + downloadSingleTrackRoute;
+    var requestUrl = '';
     if(lyrics){
-        var requestUrl = (songDownloaderAPIBaseUrl + downloadSingleTrackRoute)
+        requestUrl = baseRequestUrl
             .replace('Artist_Name', artist)
             .replace('Track_Name', trackName);
     }
     else{
-        var requestUrl = (songDownloaderAPIBaseUrl + downloadSingleTrackRoute + '/noLyrics')
+        requestUrl = (baseRequestUrl + '/noLyrics')
             .replace('Artist_Name', artist)
             .replace('Track_Name', trackName);
     }
@@ -183,4 +213,31 @@ function emphasizeCurrentTab(index/*, length*/){
 
 function updateLocalStorage(tracks){
     window.localStorage.setItem('tracks', JSON.stringify(tracks));
+}
+
+function getYoutubeVideoId(artist, trackName, lyrics, tries,callback){
+    var name = artist + ' - ' + trackName;
+    console.log(name);
+    if(lyrics){
+        name += ' lyrics';
+    }
+
+    var youtubeApiInfo = youtubeApi.replace('TrackName', name).replace('Max_Results', tries);
+    var videoId = '';
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() {
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
+            videoId = JSON.parse(xmlHttp.responseText).items[tries - 1].id.videoId;
+        }
+        console.log('trackname:', trackName);
+        callback(trackName, videoId, tries);
+    };
+
+    xmlHttp.open('GET', youtubeApiInfo, true);
+    xmlHttp.send();
+}
+
+function getTrackName(event){
+    var trackName = event.currentTarget.getElementsByClassName('trackName')[0].innerHTML;
+    return trackName;
 }
